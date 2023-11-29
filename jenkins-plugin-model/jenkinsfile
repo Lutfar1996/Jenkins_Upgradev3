@@ -49,17 +49,17 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    // Set your Docker Hub repository and tag
-                    def dockerRepository = 'lutfar1996/jenkinss'
-                    def tagName = 'latest'
+                   // Get the job name and build number
+                    def jobName = env.JOB_NAME
+                    def buildNumber = env.BUILD_NUMBER
 
-                    // Authenticate with Docker Hub using Jenkins credentials
-                    withCredentials([usernamePassword(credentialsId: '3195374b-c3ee-4ad1-aca4-b5a98642d729', usernameVariable: 'DOCKER_HUB_USER', passwordVariable: 'DOCKER_HUB_PASSWORD')]) {
-                        // Build and tag the Docker image
-                        sh "docker build -t ${dockerRepository}:${tagName} ."
-
-                        // Push the Docker image to Docker Hub
-                        sh "docker push ${dockerRepository}:${tagName}"
+                    // Print the job name and build number
+                    echo "Job Name: $jobName"
+                    echo "Build Number: $buildNumber"
+                
+                withCredentials([usernamePassword(credentialsId: '3195374b-c3ee-4ad1-aca4-b5a98642d729', usernameVariable: 'DOCKER_HUB_USER', passwordVariable: 'DOCKER_HUB_PASSWORD')]) {                      
+                    sh "chmod +x ./jenkins-plugin-model/ci/04-push.sh"
+                    sh "./jenkins-plugin-model/ci/04-push.sh $buildNumber"
                 }
                 echo "Build Completed - Job Name: $jobName  --  Build Number: $buildNumber"
             }
